@@ -1,7 +1,7 @@
 import { pathMatchRegexp } from 'utils'
 import api from 'api'
 
-const { queryUser } = api
+const { queryUser, getUsers } = api
 
 export default {
   namespace: 'userDetail',
@@ -23,13 +23,13 @@ export default {
 
   effects: {
     *query({ payload }, { call, put }) {
-      const data = yield call(queryUser, payload)
+      const data = yield call(getUsers, payload)
       const { success, message, status, ...other } = data
       if (success) {
         yield put({
           type: 'querySuccess',
           payload: {
-            data: other,
+            data: data.response,
           },
         })
       } else {

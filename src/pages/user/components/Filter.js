@@ -88,53 +88,6 @@ class Filter extends PureComponent {
 
     return (
       <Row gutter={24}>
-        <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-          {getFieldDecorator('name', { initialValue: name })(
-            <Search
-              placeholder={i18n.t`Search Name`}
-              onSearch={this.handleSubmit}
-            />
-          )}
-        </Col>
-        <Col
-          {...ColProps}
-          xl={{ span: 4 }}
-          md={{ span: 8 }}
-          id="addressCascader"
-        >
-          {getFieldDecorator('address', { initialValue: address })(
-            <Cascader
-              style={{ width: '100%' }}
-              options={city}
-              placeholder={i18n.t`Please pick an address`}
-              onChange={this.handleChange.bind(this, 'address')}
-              getPopupContainer={() =>
-                document.getElementById('addressCascader')
-              }
-            />
-          )}
-        </Col>
-        <Col
-          {...ColProps}
-          xl={{ span: 6 }}
-          md={{ span: 8 }}
-          sm={{ span: 12 }}
-          id="createTimeRangePicker"
-        >
-          <FilterItem label={i18n.t`CreateTime`}>
-            {getFieldDecorator('createTime', {
-              initialValue: initialCreateTime,
-            })(
-              <RangePicker
-                style={{ width: '100%' }}
-                onChange={this.handleChange.bind(this, 'createTime')}
-                getCalendarContainer={() => {
-                  return document.getElementById('createTimeRangePicker')
-                }}
-              />
-            )}
-          </FilterItem>
-        </Col>
         <Col
           {...TwoColProps}
           xl={{ span: 10 }}
@@ -142,18 +95,6 @@ class Filter extends PureComponent {
           sm={{ span: 24 }}
         >
           <Row type="flex" align="middle" justify="space-between">
-            <div>
-              <Button
-                type="primary"
-                className="margin-right"
-                onClick={this.handleSubmit}
-              >
-                <Trans>Search</Trans>
-              </Button>
-              <Button onClick={this.handleReset}>
-                <Trans>Reset</Trans>
-              </Button>
-            </div>
             <Button type="ghost" onClick={onAdd}>
               <Trans>Create</Trans>
             </Button>

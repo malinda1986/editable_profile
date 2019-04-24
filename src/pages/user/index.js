@@ -9,6 +9,7 @@ import { stringify } from 'qs'
 import List from './components/List'
 import Filter from './components/Filter'
 import Modal from './components/Modal'
+import ShowConfirm from './components/ShowConfirm'
 
 @withI18n()
 @connect(({ user, loading }) => ({ user, loading }))
@@ -23,6 +24,9 @@ class User extends PureComponent {
       modalVisible,
       modalType,
       selectedRowKeys,
+      file,
+      showCofirm,
+      callback,
     } = user
 
     const handleRefresh = newQuery => {
@@ -41,6 +45,7 @@ class User extends PureComponent {
     const modalProps = {
       item: modalType === 'create' ? {} : currentItem,
       visible: modalVisible,
+      file,
       maskClosable: false,
       confirmLoading: loading.effects[`user/${modalType}`],
       title: `${
@@ -60,16 +65,36 @@ class User extends PureComponent {
           type: 'user/hideModal',
         })
       },
+      uploadImg(data) {
+        dispatch({
+          type: 'user/upload',
+          payload: data,
+        })
+      },
     }
 
     const listProps = {
       dataSource: list,
+      currentItem,
+      showCofirm,
+      callback,
       loading: loading.effects['user/query'],
       pagination,
+      dispatch,
       onChange(page) {
         handleRefresh({
           page: page.current,
           pageSize: page.pageSize,
+        })
+      },
+      onShowConfirm(record, callback) {
+        dispatch({
+          type: 'user/showCofirm',
+          payload: {
+            showCofirm: true,
+            currentItem: record,
+            callback,
+          },
         })
       },
       onDeleteItem(id) {
@@ -93,17 +118,6 @@ class User extends PureComponent {
             currentItem: item,
           },
         })
-      },
-      rowSelection: {
-        selectedRowKeys,
-        onChange: keys => {
-          dispatch({
-            type: 'user/updateState',
-            payload: {
-              selectedRowKeys: keys,
-            },
-          })
-        },
       },
     }
 
@@ -164,6 +178,7 @@ class User extends PureComponent {
         )}
         <List {...listProps} />
         {modalVisible && <Modal {...modalProps} />}
+        <ShowConfirm {...listProps} />
       </Page>
     )
   }

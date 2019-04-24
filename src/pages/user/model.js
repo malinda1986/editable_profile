@@ -10,6 +10,11 @@ const {
   removeUser,
   updateUser,
   removeUserList,
+  userList,
+  userCreates,
+  deleteUsers,
+  updateUsers,
+  uploadImage,
 } = api
 
 export default modelExtend(pageModel, {
@@ -20,6 +25,8 @@ export default modelExtend(pageModel, {
     modalVisible: false,
     modalType: 'create',
     selectedRowKeys: [],
+    file: '',
+    showCofirm: false,
   },
 
   subscriptions: {
@@ -38,15 +45,15 @@ export default modelExtend(pageModel, {
 
   effects: {
     *query({ payload = {} }, { call, put }) {
-      const data = yield call(queryUserList, payload)
+      const data = yield call(userList, payload)
       if (data) {
         yield put({
           type: 'querySuccess',
           payload: {
-            list: data.data,
+            list: data.response,
             pagination: {
               current: Number(payload.page) || 1,
-              pageSize: Number(payload.pageSize) || 10,
+              pageSize: Number(payload.pageSize) || 1000,
               total: data.total,
             },
           },
@@ -55,14 +62,11 @@ export default modelExtend(pageModel, {
     },
 
     *delete({ payload }, { call, put, select }) {
-      const data = yield call(removeUser, { id: payload })
-      const { selectedRowKeys } = yield select(_ => _.user)
+      const data = yield call(deleteUsers, { id: payload })
       if (data.success) {
         yield put({
           type: 'updateState',
-          payload: {
-            selectedRowKeys: selectedRowKeys.filter(_ => _ !== payload),
-          },
+          payload: {},
         })
       } else {
         throw data
@@ -79,7 +83,7 @@ export default modelExtend(pageModel, {
     },
 
     *create({ payload }, { call, put }) {
-      const data = yield call(createUser, payload)
+      const data = yield call(userCreates, payload)
       if (data.success) {
         yield put({ type: 'hideModal' })
       } else {
@@ -87,10 +91,23 @@ export default modelExtend(pageModel, {
       }
     },
 
+    *upload({ payload }, { call, put }) {
+      const data = yield call(uploadImage, payload)
+      console.log(data)
+      if (data.success) {
+        yield put({
+          type: 'setImage',
+          payload: {
+            file: data.response.imageInfo.fileName,
+          },
+        })
+      } else {
+        throw data
+      }
+    },
+
     *update({ payload }, { select, call, put }) {
-      const id = yield select(({ user }) => user.currentItem.id)
-      const newUser = { ...payload, id }
-      const data = yield call(updateUser, newUser)
+      const data = yield call(updateUsers, payload)
       if (data.success) {
         yield put({ type: 'hideModal' })
       } else {
@@ -106,6 +123,14 @@ export default modelExtend(pageModel, {
 
     hideModal(state) {
       return { ...state, modalVisible: false }
+    },
+
+    setImage(state, { payload }) {
+      return { ...state, ...payload }
+    },
+
+    showCofirm(state, { payload }) {
+      return { ...state, ...payload }
     },
   },
 })

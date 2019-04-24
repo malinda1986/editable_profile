@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { cloneDeep, isEmpty } from 'lodash'
 import pathToRegexp from 'path-to-regexp'
+import { pathMatchRegexp } from 'utils'
+
 import { message } from 'antd'
 import { CANCEL_REQUEST_MESSAGE } from 'utils/constant'
 import qs from 'qs'
@@ -22,12 +24,26 @@ export default function request(options) {
 
     const match = pathToRegexp.parse(url)
     url = pathToRegexp.compile(url)(data)
-
+    console.log('url======', url)
     for (const item of match) {
       if (item instanceof Object && item.name in cloneData) {
         delete cloneData[item.name]
       }
     }
+    if (
+      url === '/api/v1/profile/list' ||
+      url === '/api/v1/profile' ||
+      url === '/api/v1/profile/upload' ||
+      url === '/api/v1/user/admin/login' ||
+      url === '/api/v1/user'
+    ) {
+      domain = 'http://localhost:8080'
+    }
+    const mt = pathMatchRegexp('/api/v1/profile/:id', url)
+    if (mt && mt[1]) {
+      domain = 'http://localhost:8080'
+    }
+    console.log('match===', mt)
     url = domain + url
   } catch (e) {
     message.error(e.message)

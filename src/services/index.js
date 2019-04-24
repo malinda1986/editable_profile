@@ -35,4 +35,56 @@ APIFunction.queryWeather = params => {
   })
 }
 
+APIFunction.userList = params => {
+  params.key = 'i7sau1babuzwhycn'
+  return request({
+    url: `${apiPrefix}/profile/list`,
+    data: params,
+  })
+}
+
+APIFunction.userCreates = params => {
+  params.key = 'i7sau1babuzwhycn'
+  return request({
+    url: `${apiPrefix}/profile`,
+    method: 'post',
+    data: params,
+  })
+}
+
+APIFunction.getUsers = params => {
+  params.key = 'i7sau1babuzwhycn'
+  return request({
+    url: `${apiPrefix}/profile/${params.id}`,
+    method: 'get',
+    data: params,
+  })
+}
+
+APIFunction.updateUsers = params => {
+  params.key = 'i7sau1babuzwhycn'
+  return request({
+    url: `${apiPrefix}/profile/${params.id}`,
+    method: 'put',
+    data: params,
+  })
+}
+
+APIFunction.deleteUsers = params => {
+  params.key = 'i7sau1babuzwhycn'
+  return request({
+    url: `${apiPrefix}/profile/${params.id}`,
+    method: 'delete',
+    data: params,
+  })
+}
+
+APIFunction.uploadImage = params => {
+  params.key = 'i7sau1babuzwhycn'
+  return request({
+    url: `${apiPrefix}/profile/upload`,
+    method: 'post',
+    data: params,
+  })
+}
 export default APIFunction

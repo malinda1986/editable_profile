@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import { routerRedux } from 'dva/router'
 import PropTypes from 'prop-types'
 import { Table, Modal, Avatar } from 'antd'
 import { DropOption } from 'components'
@@ -11,19 +12,41 @@ const { confirm } = Modal
 @withI18n()
 class List extends PureComponent {
   handleMenuClick = (record, e) => {
-    const { onDeleteItem, onEditItem, i18n } = this.props
+    const {
+      onDeleteItem,
+      onEditItem,
+      i18n,
+      dispatch,
+      onShowConfirm,
+    } = this.props
 
     if (e.key === '1') {
-      onEditItem(record)
+      onShowConfirm(record, () => {
+        onEditItem(record)
+      })
+
+      //onEditItem(record)
     } else if (e.key === '2') {
-      confirm({
-        title: i18n.t`Are you sure delete this record?`,
-        onOk() {
-          onDeleteItem(record.id)
-        },
+      onShowConfirm(record, () => {
+        confirm({
+          title: i18n.t`Are you sure delete this record?`,
+          onOk() {
+            onDeleteItem(record._id)
+          },
+        })
+      })
+    } else if (e.key === '3') {
+      onShowConfirm(record, () => {
+        dispatch(
+          routerRedux.push({
+            pathname: `/user/${record._id}`,
+          })
+        )
       })
     }
   }
+
+  showConfirm = (record, e) => {}
 
   render() {
     const { onDeleteItem, onEditItem, i18n, ...tableProps } = this.props
@@ -31,53 +54,48 @@ class List extends PureComponent {
     const columns = [
       {
         title: <Trans>Avatar</Trans>,
-        dataIndex: 'avatar',
-        key: 'avatar',
+        dataIndex: 'ProfilePicture',
+        key: 'ProfilePicture',
         width: 72,
         fixed: 'left',
-        render: text => <Avatar style={{ marginLeft: 8 }} src={text} />,
+        render: text => (
+          <Avatar
+            style={{ marginLeft: 8 }}
+            src={`http://localhost:8080//${text}`}
+          />
+        ),
       },
       {
-        title: <Trans>Name</Trans>,
-        dataIndex: 'name',
-        key: 'name',
-        render: (text, record) => <Link to={`user/${record.id}`}>{text}</Link>,
+        title: <Trans>Full Name</Trans>,
+        dataIndex: 'DisplayName',
+        key: 'DisplayName',
+        render: (text, record) => <Link to={`user/${record._id}`}>{text}</Link>,
       },
       {
-        title: <Trans>NickName</Trans>,
-        dataIndex: 'nickName',
-        key: 'nickName',
-      },
-      {
-        title: <Trans>Age</Trans>,
-        dataIndex: 'age',
-        key: 'age',
+        title: <Trans>Occupation</Trans>,
+        dataIndex: 'Occupation',
+        key: 'Occupation',
       },
       {
         title: <Trans>Gender</Trans>,
-        dataIndex: 'isMale',
-        key: 'isMale',
+        dataIndex: 'Gender',
+        key: 'Gender',
         render: text => <span>{text ? 'Male' : 'Female'}</span>,
       },
       {
         title: <Trans>Phone</Trans>,
-        dataIndex: 'phone',
-        key: 'phone',
+        dataIndex: 'Mobile',
+        key: 'Mobile',
       },
       {
         title: <Trans>Email</Trans>,
-        dataIndex: 'email',
-        key: 'email',
+        dataIndex: 'Email',
+        key: 'Email',
       },
       {
         title: <Trans>Address</Trans>,
-        dataIndex: 'address',
-        key: 'address',
-      },
-      {
-        title: <Trans>CreateTime</Trans>,
-        dataIndex: 'createTime',
-        key: 'createTime',
+        dataIndex: 'Address',
+        key: 'Address',
       },
       {
         title: <Trans>Operation</Trans>,
@@ -88,6 +106,7 @@ class List extends PureComponent {
             <DropOption
               onMenuClick={e => this.handleMenuClick(record, e)}
               menuOptions={[
+                { key: '3', name: i18n.t`View` },
                 { key: '1', name: i18n.t`Update` },
                 { key: '2', name: i18n.t`Delete` },
               ]}
@@ -100,10 +119,7 @@ class List extends PureComponent {
     return (
       <Table
         {...tableProps}
-        pagination={{
-          ...tableProps.pagination,
-          showTotal: total => i18n.t`Total ${total} Items`,
-        }}
+        pagination={false}
         className={styles.table}
         bordered
         scroll={{ x: 1200 }}
