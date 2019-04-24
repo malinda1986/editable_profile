@@ -28,7 +28,7 @@ self.__precacheManifest = [
     "url": "/vendors.async.js"
   },
   {
-    "revision": "37e7d6f9c3db4efaeb26",
+    "revision": "326e3588bff31ba7d01b",
     "url": "/p__user__index.async.js"
   },
   {
@@ -48,7 +48,7 @@ self.__precacheManifest = [
     "url": "/p__login__index.async.js"
   },
   {
-    "revision": "26ae2a6079bfc89a30f0",
+    "revision": "f9e8a1deb01d44bcf33c",
     "url": "/p__login__model.js.async.js"
   },
   {
@@ -56,7 +56,7 @@ self.__precacheManifest = [
     "url": "/p__user__model.js.async.js"
   },
   {
-    "revision": "37e7d6f9c3db4efaeb26",
+    "revision": "326e3588bff31ba7d01b",
     "url": "/p__user__index.chunk.css"
   },
   {
